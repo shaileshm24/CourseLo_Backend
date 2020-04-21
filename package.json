@@ -1,0 +1,50 @@
+{
+		"name": "authentication",
+		"version": "1.0.0",
+		"description": "My first project from scratch",
+		"main": "index.js",
+		"scripts": {
+				"test": "./node_modules/.bin/mocha --require @babel/register",
+				"start": "nodemon index.js --exec babel-node"
+		},
+		"repository": {
+				"type": "git",
+				"url": "git+"
+		},
+		"author": "",
+		"license": "ISC",
+		"homepage": "https://test.com/rest-api-tutorial#readme",
+		"devDependencies": {
+				"@babel/cli": "^7.8.0",
+				"@babel/core": "^7.8.3",
+				"@babel/preset-env": "^7.8.2",
+				"babel-loader": "^8.0.6",
+				"eslint": "^6.8.0",
+				"eslint-config-airbnb-base": "^14.0.0",
+				"eslint-plugin-import": "^2.20.0",
+				"eslint-plugin-jsdoc": "^20.3.1",
+				"nodemon": "^1.18.0"
+		},
+		"dependencies": {
+				"@babel/node": "^7.8.3",
+				"@hapi/joi": "^17.0.2",
+				"bcrypt": "^4.0.1",
+				"body-parser": "1.7.0",
+				"country-state-city": "^1.0.4",
+				"dotenv": "^8.2.0",
+				"express": "^4.8.7",
+				"express-joi-validation": "^0.3.0",
+				"formidable": "^1.2.1",
+				"http": "0.0.0",
+				"http-status-codes": "^1.4.0",
+				"https": "^1.0.0",
+				"jsonwebtoken": "^8.5.1",
+				"mongoose": "^5.4.2",
+				"mongoose-auto-increment": "^5.0.1",
+				"mongoose-plugin-autoinc": "^1.1.9",
+				"morgan": "^1.9.1",
+				"node-localstorage": "^2.1.5",
+				"request": "^2.88.0",
+				"winston": "^3.2.1"
+		}
+}
