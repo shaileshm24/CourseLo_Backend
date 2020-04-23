@@ -4,31 +4,41 @@ import  bcrypt  from "bcrypt";
 
 export const signup = async (req,res) =>{
 	try{
-	const data = req.body;
-	console.log(data.user);
-	const salt = 10;
-	let userInfo = {}
-	const profile =await userToken.find({"email":data.user.email});
-	console.log(profile.length);
-	if(profile.length == 0){
-	bcrypt.hash(data.user.password, salt, function(err, hash) {
-		 if(!err){
-			data.user["password"] = hash;
-			userInfo = userToken.create(data.user);
-			console.log(userInfo);	
-		 }});
-		
+		const data = req.body;
+		//console.log(data.user);
+		const salt = 10;
+		let userInfo = {}
+		const profile =await userToken.find({"email":data.user.email});
+		console.log(profile.length);
+		if(profile.length == 0){
+			const updateManagerID = await userToken.findOne({name:data.user.manager});
+			console.log(updateManagerID);
+			try{
+				if(updateManagerID){
+					bcrypt.hash(data.user.password, salt, async function(err, hash) {
+			
+						if(!err){
+					data.user["password"] = hash;
+					data.user.managerId = updateManagerID.id;
+					userInfo = await userToken.create(data.user);
+					console.log(userInfo);	
+					}});
+				}
+			
+				else{
+					throw error;
+				}
+				return res.status(200).send("Success");
+			}
+			catch(error){
+				return res.status(500).send(error);
+			}
+		}
+	}        
+	catch(error){
+		return res.status(500).send(error)
 	}
-	else{
-		throw err;
-	}
-	return res.status(200).send("Success");
-}
-	catch(err){
-		return res.status(500).send("User Already Exist")
-	}
-	};
-
+};
 
 
 export const login = async (req,res) =>{
@@ -73,14 +83,20 @@ export const getUser  = async(req, res) => {
 			};
 		
 		const result = jwt.verify(data,'secret', options);
-		console.log(result.data.user);
+		console.log(result.data.user.email);		
+    	 if (result!=null){
 		
-		 if (result!=null){
-		const getData = await userToken.find({"email":result.data.user.email});
-		console.log(getData);
+		const getuserData = await userToken.findOne({"email":result.data.user.email});
+		console.log(getuserData);
+		const getAllData = await userToken.find();
+		console.log(getAllData)
+		// if(getAllData.managerId == getuserData.id){
+		// const allUser = await userToken.find({"managerId":getData.id});
+		// console.log(allUser);}
 		//console.log(getData);
-		return res.status(200).send(getData);
+		return res.status(200).send(getuserData);
 		}
+	
 	}
 	catch(err){
 		return res.status(500).send("Invalid Token");

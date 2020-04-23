@@ -4,10 +4,12 @@ import autoIncrement from 'mongoose-plugin-autoinc';
 const collectionName  = 'userToken';
 const userTokenSchema =mongoose.Schema({
     id:{type:String,required:true},
+    name:{type:String,required:true},
     email:{type:String, required:true},
     password:{type:String,required:true},
     role:{type:String,required:true},
-    manager:{type:String,required:true}
+    manager:{type:String,required:true},
+    managerId:{type:String}
 }, {collection : collectionName});
 
 
