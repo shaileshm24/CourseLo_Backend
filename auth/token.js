@@ -9,10 +9,10 @@ export const signup = async (req,res) =>{
 		const salt = 10;
 		let userInfo = {}
 		const profile =await userToken.find({"email":data.user.email});
-		console.log(profile.length);
+		//console.log(profile.length);
 		if(profile.length == 0){
 			const updateManagerID = await userToken.findOne({name:data.user.manager});
-			console.log(updateManagerID);
+			//console.log(updateManagerID);
 			try{
 				if(updateManagerID){
 					bcrypt.hash(data.user.password, salt, async function(err, hash) {
@@ -21,7 +21,7 @@ export const signup = async (req,res) =>{
 					data.user["password"] = hash;
 					data.user.managerId = updateManagerID.id;
 					userInfo = await userToken.create(data.user);
-					console.log(userInfo);	
+					//console.log(userInfo);	
 					}});
 				}
 			
@@ -45,19 +45,31 @@ export const login = async (req,res) =>{
     try{
     		const data = req.body;
 			console.log(data.user.email);
-			let token 
+			let token,flag = false;
 			const userData = await userToken.find({"email":data.user.email});
 			if(data.user.email == userData[0].email){
 			const hash = userData[0].password;
-			await bcrypt.compare(data.user.password, hash, function(error, isMatch) {
+			await bcrypt.compare(data.user.password, hash, async function(error, isMatch) {
 				try {				
 					if(isMatch){	
 					token = jwt.sign({data}, 'secret',{expiresIn:'1h'});
+					const getAllData = await userToken.find();
+					//console.log(getAllData);
+					getAllData.forEach(function (item) {
+						//console.log(item.managerId == userData[0].id);
+						if(userData[0].id === item.managerId){
+							flag = true
+							return flag;
+						}
+						
+					  });
+					 
+					
 				}
 			else{
 				throw error;
 			}
-			return res.status(200).json(token);
+			return res.status(200).json({token,flag});
 		}
 		catch(error) {
 			return res.status(500).send(error);
@@ -68,7 +80,7 @@ export const login = async (req,res) =>{
 		return res.status(500).send(error);
 		}
 	}
-	catch(error) {
+	catch(error){
 		return res.status(500).send("Error");
 	}	
 };
@@ -103,5 +115,38 @@ export const getUser  = async(req, res) => {
 	}	
 	
 };
+
+export const getEmployees = async(req,res) =>{
+	try{
+		const data = req.headers.authorization.split(' ')[1];
+		console.log(data);
+		const options = {
+			expiresIn: '1h',
+			};
+		let getAllData;
+		const result = jwt.verify(data,'secret', options);
+		console.log(result.data.user.email);
+		let getuserData = await userToken.findOne({"email":result.data.user.email});
+		console.log(getuserData);		
+    	if (result!=null){
+			 getAllData = await userToken.find({"managerId":getuserData.id});
+			 console.log(getAllData);
+ 			//  getAllData.forEach(async item => {
+			// 	 console.log(item.managerId); 
+			// 	if(item.managerId === getuserData.id){
+			// 		allUser = await userToken.find({"managerId":getuserData.id});
+			// 		console.log(allUser); 
+			// 	}              
+		//});
+		}
+		else{
+			throw error;
+		}
+		return res.status(200).send(getAllData);
+		}
+		catch(error){
+			console.log(error)
+		}
+}
 
 
