@@ -1,4 +1,4 @@
-import {signup,getUser,login,getEmployees} from '../auth/token'
+import {signup,getUser,login,getEmployees,getCourse,assignCourse} from '../auth/token'
 
 export const routeConfig =(app) =>{
     app.post('/signup',
@@ -12,6 +12,14 @@ export const routeConfig =(app) =>{
     app.get('/verify',
         getUser,
     );
+
+    app.post('/courses',
+         getCourse,
+    );
+
+    app.post('/assign',
+        assignCourse,
+    );  
 
     app.get('/employees',
     getEmployees,

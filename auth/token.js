@@ -1,6 +1,9 @@
 import jwt from 'jsonwebtoken';
 import {userToken} from '../module/userInfo';
 import  bcrypt  from "bcrypt";
+import axios from 'axios';
+import config from '../config/config';
+
 
 export const signup = async (req,res) =>{
 	try{
@@ -89,7 +92,7 @@ export const login = async (req,res) =>{
 export const getUser  = async(req, res) => {
 	try{
 		const data = req.headers.authorization.split(' ')[1];
-		console.log(data);
+		//console.log(data);
 		const options = {
 			expiresIn: '1h',
 			};
@@ -100,8 +103,8 @@ export const getUser  = async(req, res) => {
 		
 		const getuserData = await userToken.findOne({"email":result.data.user.email});
 		console.log(getuserData);
-		const getAllData = await userToken.find();
-		console.log(getAllData)
+		//const getAllData = await userToken.find();
+		//console.log(getAllData)
 		// if(getAllData.managerId == getuserData.id){
 		// const allUser = await userToken.find({"managerId":getData.id});
 		// console.log(allUser);}
@@ -116,6 +119,7 @@ export const getUser  = async(req, res) => {
 	
 };
 
+
 export const getEmployees = async(req,res) =>{
 	try{
 		const data = req.headers.authorization.split(' ')[1];
@@ -123,14 +127,17 @@ export const getEmployees = async(req,res) =>{
 		const options = {
 			expiresIn: '1h',
 			};
-		let getAllData;
 		const result = jwt.verify(data,'secret', options);
 		console.log(result.data.user.email);
+
 		let getuserData = await userToken.findOne({"email":result.data.user.email});
-		console.log(getuserData);		
+		console.log(getuserData);
+
+		let getAllData;
+				
     	if (result!=null){
 			 getAllData = await userToken.find({"managerId":getuserData.id});
-			 console.log(getAllData);
+			 console.log(typeof getAllData);
  			//  getAllData.forEach(async item => {
 			// 	 console.log(item.managerId); 
 			// 	if(item.managerId === getuserData.id){
@@ -147,6 +154,51 @@ export const getEmployees = async(req,res) =>{
 		catch(error){
 			console.log(error)
 		}
+};
+
+
+export const getCourse = async (req,res) =>{
+	try{
+
+		const data = req.body
+		console.log(data);
+		const userSkill = await userToken.findOne({"email":data.userEmail.email});
+		console.log(userSkill.skill);
+		var courses = await axios.get(config.udemyCourseAPI+`${userSkill.skill}`,{'headers':{
+            "Accept": "application/json, text/plain, */*",
+            "Authorization": config.authorization,
+            "Content-Type": "application/json;charset=utf-8"
+		}});
+	     
+        var temp = JSON.stringify(courses.data.results);
+        temp = JSON.parse(temp);
+             
+        const courseTitle = temp.map(item => {
+          let detailOfCoarse= {}
+          detailOfCoarse['title']=item.title
+          detailOfCoarse['url'] = item.url
+          detailOfCoarse['image_480x270']= item.image_480x270
+          return detailOfCoarse;
+		});
+		console.log(courseTitle);
+		return res.status(200).send(courseTitle);
+	}
+	catch(error){
+		return res.status(500).send(error);
+	}
+};
+
+export const assignCourse = async (req,res) =>{
+	try{
+		const data = req.body;
+		console.log(data);
+		const courseUpdate = await userToken.findOneAndUpdate({"email":data.email},data);
+		console.log(courseUpdate);
+		return res.status(200).send(courseUpdate)
+	}
+	catch(error){
+		return res.status(500).send(error);
+	}
 }
 
 

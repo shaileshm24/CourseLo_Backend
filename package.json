@@ -28,6 +28,7 @@
 		"dependencies": {
 				"@babel/node": "^7.8.3",
 				"@hapi/joi": "^17.0.2",
+				"axios": "^0.19.2",
 				"bcrypt": "^4.0.1",
 				"body-parser": "1.7.0",
 				"country-state-city": "^1.0.4",

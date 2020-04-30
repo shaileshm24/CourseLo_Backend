@@ -9,7 +9,13 @@ const userTokenSchema =mongoose.Schema({
     password:{type:String,required:true},
     role:{type:String,required:true},
     manager:{type:String,required:true},
-    managerId:{type:String}
+    skill:{type:String},
+    managerId:{type:String},
+    course:{
+      title:{type:String},
+      url:{type:String},
+      image_480x270:{type:String}
+    }
 }, {collection : collectionName});
 
 
