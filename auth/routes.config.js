@@ -17,7 +17,7 @@ export const routeConfig =(app) =>{
          getCourse,
     );
 
-    app.post('/assign',
+    app.put('/assign',
         assignCourse,
     );  
 

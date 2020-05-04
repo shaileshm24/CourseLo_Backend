@@ -99,7 +99,7 @@ export const getUser  = async(req, res) => {
 		
 		const result = jwt.verify(data,'secret', options);
 		console.log(result.data.user.email);		
-    	 if (result!=null){
+    	if (result!=null){
 		
 		const getuserData = await userToken.findOne({"email":result.data.user.email});
 		console.log(getuserData);
@@ -169,10 +169,12 @@ export const getCourse = async (req,res) =>{
             "Authorization": config.authorization,
             "Content-Type": "application/json;charset=utf-8"
 		}});
-	     
+	
+	    
         var temp = JSON.stringify(courses.data.results);
-        temp = JSON.parse(temp);
-             
+		temp = JSON.parse(temp);
+		
+        
         const courseTitle = temp.map(item => {
           let detailOfCoarse= {}
           detailOfCoarse['title']=item.title
@@ -180,8 +182,12 @@ export const getCourse = async (req,res) =>{
           detailOfCoarse['image_480x270']= item.image_480x270
           return detailOfCoarse;
 		});
-		console.log(courseTitle);
-		return res.status(200).send(courseTitle);
+		let courseData = []; 
+		for (var i=0; i<=5; i++){
+			courseData[i] = courseTitle[i]
+		}
+		console.log(courseData);
+		return res.status(200).send(courseData);
 	}
 	catch(error){
 		return res.status(500).send(error);
@@ -192,13 +198,13 @@ export const assignCourse = async (req,res) =>{
 	try{
 		const data = req.body;
 		console.log(data);
-		const courseUpdate = await userToken.findOneAndUpdate({"email":data.email},data);
+		const courseUpdate = await userToken.findOneAndUpdate({"email":data.emailId.email},data);
 		console.log(courseUpdate);
 		return res.status(200).send(courseUpdate)
 	}
 	catch(error){
 		return res.status(500).send(error);
 	}
-}
+};
 
 
