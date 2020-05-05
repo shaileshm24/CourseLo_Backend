@@ -183,7 +183,7 @@ export const getCourse = async (req,res) =>{
           return detailOfCoarse;
 		});
 		let courseData = []; 
-		for (var i=0; i<=5; i++){
+		for (var i=0; i<=7; i++){
 			courseData[i] = courseTitle[i]
 		}
 		console.log(courseData);
